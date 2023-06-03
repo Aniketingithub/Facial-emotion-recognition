@@ -1,7 +1,9 @@
 import cv2
 import argparse
 import numpy as np
+import tensorflow as tf
 from keras.models import model_from_json
+from keras.utils import img_to_array
 from keras.preprocessing import image
 
 # Parse the arguments
@@ -10,13 +12,14 @@ ap.add_argument('image', help='path to input image file')
 args = vars(ap.parse_args())
 
 # Load model from JSON file
-json_file = open('top_models\\fer.json', 'r')
+json_file = open('Saved-Models\\model8515.json', 'r')
 loaded_model_json = json_file.read()
 json_file.close()
 model = model_from_json(loaded_model_json)
 
 # Load weights and them to model
-model.load_weights('top_models\\fer.h5')
+# model.load_weights('top_models\\fer.h5')
+model.load_weights('Saved-Models\\model8515.h5')
 
 classifier = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 
@@ -28,7 +31,7 @@ for (x, y, w, h) in faces_detected:
     cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
     roi_gray = gray_img[y:y + w, x:x + h]
     roi_gray = cv2.resize(roi_gray, (48, 48))
-    img_pixels = image.img_to_array(roi_gray)
+    img_pixels = tf.keras.utils.img_to_array(roi_gray)
     img_pixels = np.expand_dims(img_pixels, axis=0)
     img_pixels /= 255.0
 
